@@ -1,0 +1,4 @@
+selenium==x.x.x
+pandas==x.x.x
+scikit-learn==x.x.x
+chromedriver-autoinstaller==x.x.x
