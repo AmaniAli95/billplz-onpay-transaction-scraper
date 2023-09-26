@@ -7,6 +7,7 @@ This repository contains a Python script for automating data extraction and anal
 - Performing cleaning and preprocessing on the raw data
 - Conducting analysis on transaction trends, payment volumes, user demographics, etc. using machine learning models
 - Exporting the final analyzed dataset to BigQuery
+
 The script uses Selenium and ChromeDriver to automate logging into Billplz and exporting the transaction data. This eliminates the need to manually download reports from the Billplz dashboard. The script does not perform any in-depth data analysis or machine learning. It is focused solely on automating the extraction of transaction data as CSVs from Billplz.
 The final cleaned data ingests to BigQuery provides the raw transaction data in a structured format for further analysis as needed. This script solves the problem of manually gathering data, acting as a data collection automation tool for Billplz.
 
