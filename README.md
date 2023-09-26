@@ -1,4 +1,4 @@
-#Billplz Transaction Scrapper
+# Billplz Transaction Scrapper
 ## Overview
 This repository contains a Python script for automating data extraction and analysis from the Billplz payment gateway. The script handles the entire process including:
 - Logging into Billplz using your credentials
