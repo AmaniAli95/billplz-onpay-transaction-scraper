@@ -1,6 +1,14 @@
 # Web Data Automation
 ## Overview
-This repository contains a Python script for automating data extraction and analysis from a popular payment gateway. The script leverages Selenium for web scraping and employs machine learning models for in-depth data analysis.
+This repository contains a Python script for automating data extraction and analysis from the Billplz payment gateway. The script handles the entire process including:
+- Logging into Billplz using your credentials
+- Navigating to the transaction and reporting pages
+- Downloading transaction data as CSV files
+- Performing cleaning and preprocessing on the raw data
+- Conducting analysis on transaction trends, payment volumes, user demographics, etc. using machine learning models
+- Exporting the final analyzed dataset to BigQuery
+The script uses Selenium and ChromeDriver to automate logging into Billplz and exporting the transaction data. This eliminates the need to manually download reports from the Billplz dashboard. The script does not perform any in-depth data analysis or machine learning. It is focused solely on automating the extraction of transaction data as CSVs from Billplz.
+The final cleaned data ingests to BigQuery provides the raw transaction data in a structured format for further analysis as needed. This script solves the problem of manually gathering data, acting as a data collection automation tool for Billplz.
 
 ## Prerequisites
 Before you dive in and use the script, make sure you have the following prerequisites set up on your machine:
