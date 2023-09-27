@@ -1,4 +1,15 @@
 # Billplz Transaction Scrapper
+## Table of Contents
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Function Structure](#funtion-structure)
+- [Configuration](#configuration)
+- [Data Analysis](#data-analysis)
+- [Output](#output)
+- [Acknowledgments](#acknowledgments)
+  
 ## Overview
 This repository contains a Python script for automating data extraction and analysis from the Billplz payment gateway. The script handles the entire process including:
 - Logging into Billplz using your credentials
@@ -45,7 +56,9 @@ Execute the following command to run the script:
 ```bash
 python main.py
 ```
-The script will handle everything, from logging into your Billplz account to downloading data, conducting thorough analysis, and saving the resul
+The script will handle everything, from logging into your Billplz account to downloading data, conducting thorough analysis, and saving the result
+
+## Function Structure
 
 ## Configuration
 ```main.py```: This is the main script that orchestrates the entire automation process. It contains functions for web scraping, data analysis, and data processing.
