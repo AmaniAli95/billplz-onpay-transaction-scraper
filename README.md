@@ -1,4 +1,4 @@
-# Billplz Transaction Scrapper
+# Billplz Onpay Transaction Scrapper
 ## Table of Contents
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
@@ -11,7 +11,7 @@
 - [Acknowledgments](#acknowledgments)
   
 ## Overview
-This repository contains a Python script for automating data extraction and analysis from the Billplz payment gateway. The script handles the entire process including:
+This repository contains a Python script for automating data extraction and analysis from the Billplz and Onpay payment gateway. The script handles the entire process including:
 - Logging into Billplz using your credentials
 - Navigating to the transaction and reporting pages
 - Downloading transaction data as CSV files
@@ -19,8 +19,8 @@ This repository contains a Python script for automating data extraction and anal
 - Conducting analysis on transaction trends, payment volumes, user demographics, etc. using machine learning models
 - Exporting the final analyzed dataset to BigQuery
 
-The script uses Selenium and ChromeDriver to automate logging into Billplz and exporting the transaction data. This eliminates the need to manually download reports from the Billplz dashboard. The script does not perform any in-depth data analysis or machine learning. It is focused solely on automating the extraction of transaction data as CSVs from Billplz.
-The final cleaned data ingests to BigQuery provides the raw transaction data in a structured format for further analysis as needed. This script solves the problem of manually gathering data, acting as a data collection automation tool for Billplz.
+The script uses Selenium and ChromeDriver to automate logging into Billplz and exporting the transaction data. This eliminates the need to manually download reports from the Billplz dashboard. The script does not perform any in-depth data analysis or machine learning. It is focused solely on automating the extraction of transaction data as CSVs from Billplz and Onpay.
+The final cleaned data ingests to BigQuery provides the raw transaction data in a structured format for further analysis as needed. This script solves the problem of manually gathering data, acting as a data collection automation tool for Billplz and Onpay.
 
 ## Prerequisites
 Before you dive in and use the script, make sure you have the following prerequisites set up on your machine:
@@ -56,7 +56,7 @@ Execute the following command to run the script:
 ```bash
 python main.py
 ```
-The script will handle everything, from logging into your Billplz account to downloading data, conducting thorough analysis, and saving the result
+The script will handle everything, from logging into your Billplz and Onpay account to downloading data, conducting thorough analysis, and saving the result
 
 ## Function Structure
 
