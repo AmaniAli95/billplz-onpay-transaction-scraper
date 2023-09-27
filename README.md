@@ -22,14 +22,16 @@ This repository contains a Python script that automates the extraction and analy
 The script uses Selenium and ChromeDriver to automate logging into Billplz and exporting the transaction data. This eliminates the need to manually download reports from the Billplz dashboard. The script does not perform any in-depth data analysis or machine learning. It is focused solely on automating the extraction of transaction data as CSVs from Billplz and Onpay.
 The final cleaned data ingests to BigQuery provides the raw transaction data in a structured format for further analysis as needed. This script solves the problem of manually gathering data, acting as a data collection automation tool for Billplz and Onpay.
 
-## Prerequisites
+## Getting Started
+
+### Prerequisites
 Before you dive in and use the script, make sure you have the following prerequisites set up on your machine:
 - Python 3.x
 - Google Chrome web browser
 - Chromedriver
 - The necessary Python packages (you can install them with `pip install -r requirements.txt`)
 
-## Installation
+### Installation
 Follow these simple steps to get started:
 1. Clone the repository to your local machine:
 ```bash
@@ -43,8 +45,10 @@ cd web-data-automation
 ```bash
 pip install -r requirements.txt
 ```
+### Configuration
+`main.py`: This is the main script that orchestrates the entire automation process. It contains functions for web scraping, data analysis, and data processing.
 
-## Usage
+### Usage
 1. Configure Chrome Options (Optional):
 You can customize the Chrome browser settings by modifying the `setup_chrome_options()` function in the `main.py` script. By default, it runs in headless mode for a smoother experience.
 2. Set Up Chromedriver:
@@ -68,9 +72,6 @@ This section outlines the organization of key script components for automating t
 ### web scraping
 - **billplz.py:** Streamlines data extraction from the Billplz payment gateway. The script automates the login process, navigation to relevant pages, and downloading of transaction data in CSV format. To use it, configure the appropriate `ROOT_DIR`, provide the path to Chromedriver, and enter your Billplz login credentials. Ensure you have Python 3.x, Google Chrome, and Chromedriver installed. Upon execution, it logs in, downloads the data, and returns it as a Pandas DataFrame, facilitating data collection and automation.
 - **onpay.py:** It automates data extraction from the Onpay payment gateway using Selenium. It securely logs into your Onpay account, navigates to transaction data, applies filters, and downloads CSV files. Replace 'YourUsername,' 'YourPassword,' and '/path/to/your/root/directory' with your Onpay account credentials and desired download directory. The script utilizes ChromeDriver, headless browsing, and custom download settings for seamless automation. After downloading the data, it reads the CSV file, allowing for further data processing and analysis. Make sure you have Selenium, Pandas, and ChromeDriver installed to run this script successfully.
-
-## Configuration
-`main.py`: This is the main script that orchestrates the entire automation process. It contains functions for web scraping, data analysis, and data processing.
 
 ## Data Analysis
 The data analysis is performed using machine learning models for the prediction of occupation and gender. The trained models are defined in separate functions, `predict_occupation()` and `predict_gender()`.
