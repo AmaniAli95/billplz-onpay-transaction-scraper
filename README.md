@@ -1,11 +1,12 @@
 # Billplz Onpay Transaction Scrapper
 ## Table of Contents
 - [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Usage](#usage)
 - [File Structure](#file-structure)
-- [Configuration](#configuration)
 - [Data Analysis](#data-analysis)
 - [Output](#output)
 - [Acknowledgments](#acknowledgments)
