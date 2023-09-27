@@ -5,43 +5,38 @@ from sklearn.naive_bayes import MultinomialNB
 
 from utils.data-processing import process_location, predict_occupation, predict_gender
 
-def analyzedata():
-    billplz_data = pd.read_csv(os.path.join(ROOT_DIR, 'billplz_data.csv'))
-    billplz_data = billplz_data.rename(columns=lambda x: f'BPL {x}')
-    data_billplz = billplz_data[billplz_data['Platform'] == 'billplz']
+def analyze_data(ROOT_DIR):
+    billplz_data = pd.read_csv(ROOT_DIR + '/path/to/billplz_data.csv')
+    onpay = pd.read_csv(ROOT_DIR + '/path/to/onpay_data.csv')
+    billplz_data.rename(columns=lambda col: 'BPL ' + col, inplace=True)
+    onpay.rename(columns=lambda col: 'OP ' + col, inplace=True)
+    onpay = onpay.apply(process_location, axis=1)
+    merged_data = pd.merge(onpay, billplz_data, how='outer', left_on='OP Billplz - Bill ID', right_on='BPL BILL ID', indicator=True)
+    merged_data.to_csv(ROOT_DIR + '/path/to/merged_data.csv')
+    merged_data.rename(columns={'_merge': 'Platform'}, inplace=True)
+    merged_data['Platform'] = merged_data['Platform'].map({'both': 'onpay_billplz', 'right_only': 'billplz', 'left_only': 'Onpay'})
 
+    data_billplz = merged_data[merged_data['Platform'] == 'billplz']
+    data_onpay = merged_data[merged_data['Platform'] == 'Onpay']
+    data_onpay_billplz = merged_data[merged_data['Platform'] == 'onpay_billplz']
+    data_onpay['NAME'] = data_onpay['OP Nama']
     data_billplz['NAME'] = data_billplz['BPL NAME']
-    data_billplz['EMAIL'] = data_billplz['BPL EMAIL']
-    data_billplz['PAYMENT_RECEIVED'] = data_billplz['BPL PAYMENT RECEIVED']
-    data_billplz['TRANSACTION_DATE'] = data_billplz['BPL TRANSACTION DATE['OP Tarikh & Masa (Dimasukkan)']
-    data_billplz['CAMPAIGN'] = data_billplz['BPL COLLECTION TITLE']
-
-    data_billplz['TRANSACTION_DATE'].fillna('N/A', inplace=True)
-    data_billplz['PAYMENT_RECEIVED'].fillna(0, inplace=True)
-    data_billplz['GENDER'].fillna('N/A', inplace=True)
-    data_billplz['OCCUPATION'].fillna('N/A', inplace=True)
-
-    cv_gender = CountVectorizer()
-    cv_occupation = CountVectorizer()
-    clf_gender = MultinomialNB()
-    clf_occupation = MultinomialNB()
-
-    names_gender = pd.read_csv(os.path.join(ROOT_DIR, 'train_gender.csv'))
-    names_occupation = pd.read_csv(os.path.join(ROOT_DIR, 'train_occupation.csv'))
-    X_gender = cv_gender.fit_transform(names_gender['name']).toarray()
-    y_gender = names_gender['gender']
-    clf_gender.fit(X_gender, y_gender)
-    X_occupation = cv_occupation.fit_transform(names_occupation['name']).toarray()
-    y_occupation = names_occupation['occupation']
-    clf_occupation.fit(X_occupation, y_occupation)
-    data_billplz['GENDER'] = data_billplz['NAME'].apply(
-        lambda x: predict_gender(x, cv_gender, clf_gender)
-    )
-    data_billplz['OCCUPATION'] = data_billplz['NAME'].apply(
-        lambda x: predict_occupation(x, cv_occupation, clf_occupation)
-    )
-
-    data_billplz['TYPE_OF_ACCOUNT'] = data_billplz['CAMP'].apply('M')
-
-    data_billplz.to_csv(os.path.join(ROOT_DIR, 'processed_data.csv'))
-    return data_billplz
+    data_onpay_billplz['NAME'] = data_onpay_billplz['BPL NAME']
+    df_merge_onpay_billplz = pd.concat([data_onpay, data_billplz, data_onpay_billplz])
+    df_merge_onpay_billplz['BPL TYPE_OF_ACCOUNT'] = df_merge_onpay_billplz['BPL TYPE_OF_ACCOUNT'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP Status Jualan'] = df_merge_onpay_billplz['OP Status Jualan'].fillna('DISAHKAN')
+    df_merge_onpay_billplz['OP_IP_Country'] = df_merge_onpay_billplz['OP_IP_Country'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP_IP_City'] = df_merge_onpay_billplz['OP_IP_City'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP_IP_State'] = df_merge_onpay_billplz['OP_IP_State'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP_IP_Latitude'] = df_merge_onpay_billplz['OP_IP_Latitude'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP_IP_Longitude'] = df_merge_onpay_billplz['OP_IP_Longitude'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['OP_IP_Postal'] = df_merge_onpay_billplz['OP_IP_Postal'].fillna('UNKNOWN')
+    df_merge_onpay_billplz['CAMPAIGN'] = df_merge_onpay_billplz['CAMPAIGN'].fillna('UNKNOWN')
+    df_merge_onpay_billplz = df_merge_onpay_billplz.apply(predict_gender, axis=1)
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(df_merge_onpay_billplz['CAMPAIGN'])
+    X_train, X_test, y_train, y_test = train_test_split(X, df_merge_onpay_billplz['PAYMENT_RECEIVED'], test_size=0.2, random_state=42)
+    model = MultinomialNB()
+    model.fit(X_train, y_train)
+    accuracy = model.score(X_test, y_test)
+    return accuracy
