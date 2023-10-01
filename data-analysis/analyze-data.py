@@ -3,15 +3,18 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 import requests
+from dotenv import load_dotenv
 
 from utils.data-processing import process_location, predict_occupation, predict_gender
 
+load_dotenv()
+
 # Define constants for file paths and sensitive information
-ROOT_DIR = '/your/root/directory'
-BILLPLZ_DATA_PATH = ROOT_DIR + '/path/to/billplz_data.csv'
-ONPAY_DATA_PATH = ROOT_DIR + '/Deploy Onpay/sales-report.csv'
-NAMA_DATA_PATH = ROOT_DIR + '/Deploy name.csv'
-OCCUPATION_DATA_PATH = ROOT_DIR + '/Deploy new_traindata.csv'
+ROOT_DIR = 'os.environ.get("ROOT_DIR")
+BILLPLZ_DATA_PATH = os.environ.get("BILLPLZ_DATA_PATH")
+ONPAY_DATA_PATH = os.environ.get("ONPAY_DATA_PATH")
+NAMA_DATA_PATH = os.environ.get("NAMA_DATA_PATH")
+OCCUPATION_DATA_PATH = os.environ.get("OCCUPATION_DATA_PATH")
 
 def rename_columns(df):
     for column in df.columns:
