@@ -3,8 +3,12 @@ from datetime import date, timedelta
 from selenium import webdriver
 import os
 import pandas as pd
+from dotenv import load_dotenv
 
-ROOT_DIR = '/your/root/path' 
+load_dotenv()
+
+ROOT_DIR = os.environ.get("ROOT_DIR")
+
 def login_to_billplz(driver, url, username, password):
     driver.get(url)
     username_field = driver.find_element_by_id("user_email")
