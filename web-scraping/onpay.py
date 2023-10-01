@@ -3,11 +3,14 @@ import time
 import os
 import pandas as pd
 from datetime import date, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # General variables
-USERNAME = 'YourUsername'
-PASSWORD = 'YourPassword'
-ROOT_DIR = '/path/to/your/root/directory'
+USERNAME = os.environ.get("USERNAME")
+PASSWORD = os.environ.get("PASSWORD")
+ROOT_DIR = os.environ.get("ROOT_DIR")
 
 def onpay_data():
     options = webdriver.ChromeOptions()
