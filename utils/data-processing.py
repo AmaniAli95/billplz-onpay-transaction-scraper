@@ -19,15 +19,17 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from dotenv import load_dotenv
 
+load_dotenv()
 seed(1)
 tf.random.set_seed(2)
 nltk.download('stopwords')
 nltk.download('punkt')
 
 # Replace with your dataset and model file paths
-DATASET_PATH = '/path/to/your/dataset.csv'
-MODEL_PATH = '/path/to/your/model.h5'
+DATASET_PATH = os.environ.get("DATASET_PATH")
+MODEL_PATH = os.environ.get("MODEL_PATH")
 
 vocab_size = 50000
 embedding_dim = 128
