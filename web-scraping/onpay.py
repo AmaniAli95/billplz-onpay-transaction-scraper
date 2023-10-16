@@ -27,7 +27,7 @@ def onpay_data():
     })
     
     driver = webdriver.Chrome(executable_path=path, options=options)
-    driver.get('https://mfa.myfundaction.org.my/admin/main')
+    driver.get('https://main')
     
     # Login
     username = driver.find_element_by_id("username")
