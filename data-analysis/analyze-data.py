@@ -1,36 +1,38 @@
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
-import requests
+import tensorflow as tf
+from sklearn.preprocessing import OneHotEncoder
+from tensorflow.keras.preprocessing.text import Tokenizer
 from dotenv import load_dotenv
+from utils.data-processing import load_data,rename_columns,merge_data,load_text_model,load_gender_model,predict_occupation,predict_gender
 
-from utils.data-processing import process_location, predict_occupation, predict_gender
-
+# Load environment variables
 load_dotenv()
 
-# Define constants for file paths and sensitive information
-ROOT_DIR = 'os.environ.get("ROOT_DIR")
+# Load datasets
 BILLPLZ_DATA_PATH = os.environ.get("BILLPLZ_DATA_PATH")
 ONPAY_DATA_PATH = os.environ.get("ONPAY_DATA_PATH")
-NAMA_DATA_PATH = os.environ.get("NAMA_DATA_PATH")
-OCCUPATION_DATA_PATH = os.environ.get("OCCUPATION_DATA_PATH")
+billplz_data = load_data(BILLPLZ_DATA_PATH)
+onpay_data = load_data(ONPAY_DATA_PATH)
 
-def rename_columns(df):
-    for column in df.columns:
-        df.rename(columns={column: f'BPL {column}'}, inplace=True)
+# Define model paths
+TEXT_MODEL_PATH = 'text_classification_model.h5'
+GENDER_MODEL_PATH = 'gender_prediction_model.h5'
 
-def load_data(file_path):
-    return pd.read_csv(file_path)
+vocab_size = 50000
+max_length = 200
+trunc_type = 'post'
+padding_type = 'post'
+oov_tok = '<OOV>'
 
-def merge_data(billplz_data, onpay_data):
-    merged_data = pd.merge(onpay_data, billplz_data, how='outer', left_on='OP Billplz - Bill ID', right_on='BPL BILL ID', indicator=True)
-    merged_data.to_csv(ROOT_DIR + '/Deploy billplzonpay.csv')
-    merged_data['_merge'] = merged_data['_merge'].astype(str)
-    merged_data['_merge'].loc[(merged_data['_merge'] == 'both')] = 'onpay_billplz'
-    merged_data['_merge'].loc[(merged_data['_merge'] == 'right_only')] = 'billplz'
-    merged_data['_merge'].loc[(merged_data['_merge'] == 'left_only')] = 'Onpay'
-    return merged_data
+rename_columns(billplz_data)
+rename_columns(onpay_data)
+merged_data = merge_data(billplz_data, onpay_data)
+
+
+tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_tok)
+encode = OneHotEncoder()  # Define your encoder with appropriate settings
+text_model, tokenizer, encode = load_text_model(TEXT_MODEL_PATH, tokenizer, encode)
+gender_model, char_index, len_vocab = load_gender_model(GENDER_MODEL_PATH, char_index, len_vocab)
 
 def analyze_data(merged_data):
     data_billplz = merged_data[merged_data['_merge'] == 'billplz']
@@ -65,44 +67,27 @@ def analyze_data(merged_data):
     merged_data['NAME'] = merged_data['NAME'].str.lower()
     merged_data['FirstName'] = merged_data['NAME'].str.split().str[0]
     merged_data['Gender'].replace({'F':0,'M':1},inplace=True)
-    Xfeatures =merged_data['Name']
-    cv = CountVectorizer()
-    X = cv.fit_transform(Xfeatures)
-    y = merged_data.Gender
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
-    clf = MultinomialNB()
-    clf.fit(X_train,y_train)
-    clf.score(X_test,y_test)
-    merged_data.reset_index(inplace=True)
+    
     for i in range(len(merged_data)):
         a = merged_data['GENDER'].iloc[i]
         if a == None :
             try:
                 b = merged_data['NAME'].iloc[i]
                 if b != 'tiada nama':
-                    c = genderpredictor(b)
+                    c = predict_gender(b, gender_model, char_index, len_vocab)
                     merged_data.loc[i,'GENDER']=c
                 elif b == 'tiada nama':
                     merged_data.loc[i,'GENDER']= 'UNKNOWN'
             except:
                 merged_data.loc[i,'GENDER']= 'UNKNOWN'
-    Xfeatures =merged_data['occupation']
-    cv = CountVectorizer()
-    X = cv.fit_transform(Xfeatures)
-    y = merged_data['occupation_type']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
-    clf = MultinomialNB()
-    clf.fit(X_train,y_train)
     
-    merged_data.reset_index(inplace=True)
     for i in range(len(merged_data)):
         try:
             b = merged_data['occupation'].iloc[i]
             if b != 'tiada nama':
-                merged_data.loc[i,'occupation_type']= occupation(b)
+                merged_data.loc[i,'occupation_type']= predict_occupation(b, text_model, tokenizer, encode)
             elif b == 'tiada nama':
                 merged_data.loc[i,'occupation_type']= 'K'
         except:
             merged_data.loc[i,'occupation_type']= 'K'  
     return merged_data
-
